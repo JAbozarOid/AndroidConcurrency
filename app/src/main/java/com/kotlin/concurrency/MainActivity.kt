@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.PackageManagerCompat.LOG_TAG
 import com.kotlin.concurrency.databinding.ActivityMainBinding
@@ -33,12 +34,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun runCode() {
-        val runnable = Runnable { log("operation from runnable") }
-        Handler().apply {
-            post(runnable)
-        }
+
+        Handler().postAtTime({log("posting at a certain time")},SystemClock.uptimeMillis() + 4000)
 
         // run the operation at the end of the stack
+        Handler().apply {
+            postDelayed(Runnable {
+                log("operation from runnable 1")
+            }, 1000)
+            postDelayed(Runnable {
+                log("operation from runnable 2")
+            }, 2000)
+            postDelayed(Runnable {
+                log("operation from runnable 3")
+            }, 3000)
+        }
+
         log("Synchronous operation 1")
         log("Synchronous operation 2")
         log("Synchronous operation 3")
